@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<h1>Falcon Technologies</h1>
+<p>This site is a prototype API.</p>
+
+<h2>Parameters</h2>
+<p>All parameters are optional.</p>
+<h3>series</h3>
+<p>
+    The requested series rates.
+    <br>Strings separated by commas
+    <br>Possible series for Bank of Canada:
+    <br>'prime_rate', 'one_year_conventional_mortgage',
+    'three_year_conventional_mortgage', 'five_year_conventional_mortgage'
+    <br>Possible series for Federal Reserve Economic Data:
+    <br>'prime_rate', 'five_year_average_mortgage',
+    'fifteen_year_average_mortgage', 'thirty_year_average_mortgage'
+</p>
+<h3>start_date</h3>
+<p>
+The earliest date for series data.
+<br>YYYY-MM-DD formatted string.
+</p>
+<h3>end_date</h3>
+<p>
+The latest date for series data.
+<br>YYYY-MM-DD formatted string.
+</p>
+<h3>hide_none</h3>
+<p>
+Whether to hide entries with any null values
+<br>'true' or 'false'
+</p>
+<h3>offset</h3>
+<p>
+how many entries to skip.
+<br>integer.
+</p>
+<h3>limit</h3>
+<p>
+The maximum amount of entries to show.
+<br>integer.
+</p>
