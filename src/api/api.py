@@ -17,7 +17,7 @@ def setup_db(DB_URI: str) -> Tuple[Engine, MetaData]:
     meta = MetaData()
     engine = create_engine(DB_URI)
     meta.reflect(engine)
-    return engine, meta
+    return meta, engine
 
 @app.route('/', methods=['GET'])
 def home() -> Response:
@@ -99,12 +99,14 @@ def api_request_error(err):
     """The handler for bad requests to the API."""
     return jsonify({'error': f"{err}"}), 400
 
-connected = True
+# This won't run if imported by flask
+#if __name__ == '__main__':
+try:
+    meta, engine = setup_db(DB_URI)
+    connected = True
+except Exception as err:
+    print("Could not connect to database.")
+    print(err)
+    connected = False
 
-if __name__ == '__main__':
-    try:
-        meta, engine = setup_db(DB_URI)
-    except:
-        connected = False
-        print("Could not connect to database.")
-    app.run()
+app.run()
