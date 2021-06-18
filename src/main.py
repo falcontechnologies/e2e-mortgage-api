@@ -20,8 +20,5 @@ def main() -> None:
         print("Data already in database.")
         print(err)
 
-    # Weekly update
-    # automate(conn, meta, BOC_URL, BOC_SERIES, FRED_API_KEY, FRED_URL, FRED_SERIES)
-
 if __name__ == '__main__':
     main()

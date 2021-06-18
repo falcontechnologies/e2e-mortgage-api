@@ -3,11 +3,17 @@ from flask import request, abort, jsonify, render_template, redirect, url_for
 from sqlalchemy import create_engine, MetaData
 from sqlalchemy import select
 from config import DB_URI
+import logging
 
 # Type hinting documentation
 from typing import Tuple
 from flask import Response
 from sqlalchemy.engine.base import Engine
+
+logging.basicConfig(
+    filename='.log', format='%(asctime)s %(levelname)s:%(message)s'
+)
+logger = logging.getLogger(__name__)
 
 app = flask.Flask(__name__)
 app.config["DEBUG"] = True # TODO remove this before deployment
@@ -34,6 +40,7 @@ def docs() -> Response:
 def series(bank_name: str=None) -> Response:
     """The main API page where http requests are made."""
     if not connected:
+        logger.info("attempt to access data when not connected to database")
         abort(500)
 
     with engine.connect() as conn:
@@ -105,8 +112,7 @@ try:
     meta, engine = setup_db(DB_URI)
     connected = True
 except Exception as err:
-    print("Could not connect to database.")
-    print(err)
+    logger.error("could not connect to %s", DB_URI)
     connected = False
 
 app.run()
