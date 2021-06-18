@@ -110,8 +110,9 @@ def api_request_error(err):
 #if __name__ == '__main__':
 try:
     meta, engine = setup_db(DB_URI)
+    logger.info("sucessfully connected to %s", DB_URI)
     connected = True
-except Exception as err:
+except:
     logger.error("could not connect to %s", DB_URI)
     connected = False
 
