@@ -3,11 +3,17 @@ from flask import request, abort, jsonify, render_template, redirect, url_for
 from sqlalchemy import create_engine, MetaData
 from sqlalchemy import select
 from config import DB_URI
+import logging
 
 # Type hinting documentation
 from typing import Tuple
 from flask import Response
 from sqlalchemy.engine.base import Engine
+
+logging.basicConfig(
+    filename='.log', format='%(asctime)s %(levelname)s:%(message)s'
+)
+logger = logging.getLogger(__name__)
 
 app = flask.Flask(__name__)
 app.config["DEBUG"] = True # TODO remove this before deployment
@@ -17,7 +23,7 @@ def setup_db(DB_URI: str) -> Tuple[Engine, MetaData]:
     meta = MetaData()
     engine = create_engine(DB_URI)
     meta.reflect(engine)
-    return engine, meta
+    return meta, engine
 
 @app.route('/', methods=['GET'])
 def home() -> Response:
@@ -34,6 +40,7 @@ def docs() -> Response:
 def series(bank_name: str=None) -> Response:
     """The main API page where http requests are made."""
     if not connected:
+        logger.info("attempt to access data when not connected to database")
         abort(500)
 
     with engine.connect() as conn:
@@ -99,12 +106,14 @@ def api_request_error(err):
     """The handler for bad requests to the API."""
     return jsonify({'error': f"{err}"}), 400
 
-connected = True
+# This won't run if imported by flask
+#if __name__ == '__main__':
+try:
+    meta, engine = setup_db(DB_URI)
+    logger.info("sucessfully connected to %s", DB_URI)
+    connected = True
+except:
+    logger.error("could not connect to %s", DB_URI)
+    connected = False
 
-if __name__ == '__main__':
-    try:
-        meta, engine = setup_db(DB_URI)
-    except:
-        connected = False
-        print("Could not connect to database.")
-    app.run()
+app.run()
