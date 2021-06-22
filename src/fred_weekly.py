@@ -10,3 +10,4 @@ meta.reflect(engine)
 # Grab and insert the latest FRED series data
 US_grab(FRED_URL, FRED_SERIES, FRED_API_KEY, True)
 US_insert_db(conn, meta, FRED_SERIES)
+print("US weekly data was successfully inserted")
