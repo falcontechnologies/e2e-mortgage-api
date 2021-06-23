@@ -1,6 +1,6 @@
 import json
 from sqlalchemy import create_engine, MetaData
-from sqlalchemy import Table, Column, String, Float
+from sqlalchemy import Table, Column, String, Float, Sequence
 from collections import defaultdict
 
 from datetime import datetime
@@ -30,7 +30,7 @@ def setup_db(db_uri: str) -> Tuple[MetaData, Engine]:
     )
     users = Table(
         'users', meta,
-        Column('account_id', String, primary_key=True),
+        Column('account_id', int, Sequence('user_account_id_seq'), primary_key=True),
         Column('name', String),
         Column('email', String),
         Column('api_key', String),
@@ -39,6 +39,7 @@ def setup_db(db_uri: str) -> Tuple[MetaData, Engine]:
         Column('registered', String),
         Column('updated', String, nullable=True) # May have no updates
     )
+
     engine = create_engine(db_uri)
     meta.create_all(engine, checkfirst=True)
     return meta, engine
