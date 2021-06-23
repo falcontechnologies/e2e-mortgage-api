@@ -3,6 +3,8 @@ from sqlalchemy import create_engine, MetaData
 from sqlalchemy import Table, Column, String, Float
 from collections import defaultdict
 
+from datetime import datetime
+
 # Type hinting documentation
 from typing import Tuple, List
 from sqlalchemy.engine.base import Engine, Connection
@@ -25,6 +27,17 @@ def setup_db(db_uri: str) -> Tuple[MetaData, Engine]:
         Column('five_year_average_mortgage', Float(2)),
         Column('fifteen_year_average_mortgage', Float(2)),
         Column('thirty_year_average_mortgage', Float(2)),
+    )
+    users = Table(
+        'users', meta,
+        Column('account_id', String, primary_key=True),
+        Column('name', String),
+        Column('email', String),
+        Column('api_key', String),
+        Column('session_key', String, nullable=True), # Generated when using API
+                                                      # Expires after set time
+        Column('registered', String),
+        Column('updated', String, nullable=True) # May have no updates
     )
     engine = create_engine(db_uri)
     meta.create_all(engine, checkfirst=True)
@@ -91,3 +104,18 @@ def US_insert_db(
             thirty_year_average_mortgage=rates['MORTGAGE30US']
         )
         result = conn.execute(ex)
+
+def new_user(
+    conn: Connection, meta: MetaData, name, email
+    ) -> None:
+    users = meta.tables['users']
+
+    ex = users.insert().values(
+        account_id="",
+        name=name,
+        email=email,
+        api_key="",
+        registered=datetime.now(),
+        updated=None)
+
+    result = conn.execute(ex)
